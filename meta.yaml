@@ -1,0 +1,22 @@
+# ===================================================
+# meta infos
+# ===================================================
+
+meta:
+  project: dlm-devinfo-static
+  include:
+    - dobi.yaml
+    - version.yaml
+    - src/dobi.yaml
+
+# ===================================================
+# alias
+# ===================================================
+
+alias=build:
+  tasks:
+    - build-dlm-devinfo-static
+  annotations:
+    description: "\t\t-> [alias] build all"
+    tags:
+      - alias
