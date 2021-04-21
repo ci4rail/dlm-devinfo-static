@@ -1,0 +1,37 @@
+# ===================================================
+# mounts
+# ===================================================
+mount=mount-dlm-devinfo-static-src:
+  bind: "src/"
+  path: "/src"
+  read-only: false
+
+mount=mount-dlm-devinfo-static-bin:
+  bind: "bin/"
+  path: "/install"
+  read-only: false
+
+# ===================================================
+# jobs
+# ===================================================
+
+job=build-dlm-devinfo-static:
+  use: image-go-builder
+  command: bash -c 'cd /src && make -j${nproc}'
+  mounts:
+    - mount-dlm-devinfo-static-src
+    - mount-dlm-devinfo-static-bin
+    - mount-go-pkg
+  sources:
+    - src
+  artifact:
+    - bin/dlm-devinfo-static
+  user: "{user.uid}:{user.gid}"
+  env:
+    - VERSION={env.GitVersion_InformationalVersion}
+    - BIN_DIR=/install
+    - GOCACHE=/tmp/cache
+  annotations:
+    description: "\t-> build dlm-devinfo-static"
+    tags:
+      - build
