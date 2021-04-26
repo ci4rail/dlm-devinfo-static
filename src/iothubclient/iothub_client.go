@@ -31,9 +31,7 @@ func SetStaticDeviceInfo(c *iotdevice.Client, d DeviceInfo) error {
 	}
 
 	// connect to the iothub
-	if err := waitForIotHubConnection(c); err != nil {
-		return err
-	}
+	waitForIotHubConnection(c)
 
 	s := makeStaticDeviceInfo(d)
 	if _, err := c.UpdateTwinState(context.Background(), s); err != nil {
@@ -43,13 +41,12 @@ func SetStaticDeviceInfo(c *iotdevice.Client, d DeviceInfo) error {
 }
 
 // Wait forever for IotHub Connection
-func waitForIotHubConnection(c *iotdevice.Client) error {
+func waitForIotHubConnection(c *iotdevice.Client) {
 	for {
 		err := c.Connect(context.Background())
-
 		if err == nil {
 			fmt.Println("connect to iothub ok")
-			return nil
+			return
 		}
 		time.Sleep(time.Second)
 	}
