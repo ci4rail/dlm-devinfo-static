@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/amenzhinsky/iothub/iotdevice"
 	iotmqtt "github.com/amenzhinsky/iothub/iotdevice/transport/mqtt"
@@ -30,16 +31,25 @@ func SetStaticDeviceInfo(c *iotdevice.Client, d DeviceInfo) error {
 	}
 
 	// connect to the iothub
-	if err := c.Connect(context.Background()); err != nil {
-		return err
-	}
-	fmt.Println("connect to iothub ok")
+	waitForIotHubConnection(c)
 
 	s := makeStaticDeviceInfo(d)
 	if _, err := c.UpdateTwinState(context.Background(), s); err != nil {
 		return err
 	}
 	return nil
+}
+
+// Wait forever for IotHub Connection
+func waitForIotHubConnection(c *iotdevice.Client) {
+	for {
+		err := c.Connect(context.Background())
+		if err == nil {
+			fmt.Println("connect to iothub ok")
+			return
+		}
+		time.Sleep(time.Second)
+	}
 }
 
 func makeStaticDeviceInfo(d DeviceInfo) iotdevice.TwinState {
